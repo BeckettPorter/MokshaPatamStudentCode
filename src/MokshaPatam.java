@@ -23,7 +23,34 @@ public class MokshaPatam {
         {
             if (getDistanceToClosestLadder(currentPos, ladders) != -1)
             {
-                // bruh how tf do I do this
+                for(int i = 6; i >= 1; i--)
+                {
+                    if (getDistanceToClosestLadder(currentPos, ladders) <= 6)
+                    {
+                        currentPos = whereDoesLadderGo(currentPos +
+                                getDistanceToClosestLadder(currentPos, ladders), ladders);
+                        numMovesTaken++;
+                        break;
+                    }
+                    if (!doesLocationContainSnake(currentPos + i, snakes))
+                    {
+                        currentPos += i;
+                        numMovesTaken++;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for(int i = 6; i >= 1; i--)
+                {
+                    if (!doesLocationContainSnake(currentPos + i, snakes) && currentPos + i <= boardsize)
+                    {
+                        currentPos += i;
+                        numMovesTaken++;
+                        break;
+                    }
+                }
             }
         }
 
@@ -31,28 +58,20 @@ public class MokshaPatam {
     }
 
 
-//    // Method I made to calculate the minimum number of roles needed to reach a target location from a start point.
-//    private static int calcNumDiceRollsToReachLocation(int startLocation, int targetLocation)
-//    {
-//        int currentIndex = startLocation;
-//        int numRolls = 0;
-//
-//        while (currentIndex != targetLocation)
-//        {
-//            if ((targetLocation - currentIndex) >= 6)
-//            {
-//                currentIndex += 6;
-//                numRolls++;
-//            }
-//            else
-//            {
-//                currentIndex += (targetLocation - currentIndex);
-//                numRolls++;
-//            }
-//        }
-//        return numRolls;
-//    }
+    private static int whereDoesLadderGo(int ladderStartLoc, int[][] laddersAr)
+    {
+        int endLoc = -1;
 
+        for (int i = 0; i < laddersAr.length; i++)
+        {
+            if (ladderStartLoc == laddersAr[i][0])
+            {
+                endLoc = laddersAr[i][1];
+            }
+
+        }
+        return endLoc;
+    }
 
 
     private static int getDistanceToClosestLadder(int startLocation, int[][] laddersAr)
