@@ -16,19 +16,23 @@ public class MokshaPatam {
      */
     public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
 
-        int currentPos = 0;
+        int currentPos = 1;
         int numMovesTaken = 0;
 
         while (currentPos != boardsize)
         {
-            if (getDistanceToClosestLadder(currentPos, ladders) != -1)
+            int closestLadderDistance = getDistanceToClosestLadder(currentPos, ladders);
+
+            // If there is a ladder between current position and end of board.
+            if (closestLadderDistance != -1)
             {
                 for(int i = 6; i >= 1; i--)
                 {
-                    if (getDistanceToClosestLadder(currentPos, ladders) <= 6)
+                    // Checks if ladder is within 6 of the current pos, and if so, goes straight to it.
+                    if (closestLadderDistance <= 6)
                     {
                         currentPos = whereDoesLadderGo(currentPos +
-                                getDistanceToClosestLadder(currentPos, ladders), ladders);
+                                closestLadderDistance, ladders);
                         numMovesTaken++;
                         break;
                     }
@@ -48,6 +52,7 @@ public class MokshaPatam {
                     {
                         currentPos += i;
                         numMovesTaken++;
+
                         break;
                     }
                 }
