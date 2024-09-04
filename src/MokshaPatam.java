@@ -23,7 +23,7 @@ public class MokshaPatam {
         {
             if (getDistanceToClosestLadder(currentPos, ladders) != -1)
             {
-
+                // bruh how tf do I do this
             }
         }
 
@@ -52,6 +52,8 @@ public class MokshaPatam {
 //        }
 //        return numRolls;
 //    }
+
+
 
     private static int getDistanceToClosestLadder(int startLocation, int[][] laddersAr)
     {
