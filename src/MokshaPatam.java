@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Moksha Patam
  * A puzzle created by Zach Blick
@@ -17,53 +20,57 @@ public class MokshaPatam {
     public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
 
         int currentPos = 1;
-        int numMovesTaken = 0;
+        int[] numMovesTaken = new int[boardsize + 1];
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visitedLocs = new boolean[boardsize + 1];
 
+        queue.add(1);
         while (currentPos != boardsize)
         {
-            int closestLadderDistance = getDistanceToClosestLadder(currentPos, ladders);
-
-            // If there is a ladder between current position and end of board.
-            if (closestLadderDistance != -1)
+            if (queue.isEmpty())
             {
-                for(int i = 6; i >= 1; i--)
-                {
-                    // Checks if ladder is within 6 of the current pos, and if so, goes straight to it.
-                    if (closestLadderDistance <= 6)
-                    {
-                        currentPos = whereDoesLadderGo(currentPos +
-                                closestLadderDistance, ladders);
-                        numMovesTaken++;
-                        break;
-                    }
-                    if (!doesLocationContainSnake(currentPos + i, snakes))
-                    {
-                        currentPos += i;
-                        numMovesTaken++;
-                        break;
-                    }
-                }
+                return -1;
             }
-            else
-            {
-                for(int i = 6; i >= 1; i--)
-                {
-                    if (!doesLocationContainSnake(currentPos + i, snakes) && currentPos + i <= boardsize)
-                    {
-                        currentPos += i;
-                        numMovesTaken++;
 
-                        break;
-                    }
+            currentPos = queue.remove();
+
+            if (currentPos == boardsize)
+            {
+                return numMovesTaken[boardsize];
+            }
+
+            for (int i = 1; i <= 6; i++)
+            {
+                if (currentPos + i > boardsize)
+                {
+                    break;
+                }
+
+                int node = currentPos + i;
+
+                if (doesLocationContainLadderOrSnake(node, snakes))
+                {
+                    node = whereDoesLadderOrSnakeGo(node, snakes);
+                }
+                else if (doesLocationContainLadderOrSnake(node, ladders))
+                {
+                    node = whereDoesLadderOrSnakeGo(node, ladders);
+                }
+
+                if (!visitedLocs[node])
+                {
+                    visitedLocs[node] = true;
+                    queue.add(node);
+                    numMovesTaken[node] = numMovesTaken[currentPos] + 1;
                 }
             }
         }
 
-        return numMovesTaken;
+        return numMovesTaken[boardsize];
     }
 
 
-    private static int whereDoesLadderGo(int ladderStartLoc, int[][] laddersAr)
+    private static int whereDoesLadderOrSnakeGo(int ladderStartLoc, int[][] laddersAr)
     {
         int endLoc = -1;
 
@@ -102,7 +109,7 @@ public class MokshaPatam {
         return -1;
     }
 
-    private static boolean doesLocationContainSnake(int loc, int[][] snakesAr)
+    private static boolean doesLocationContainLadderOrSnake(int loc, int[][] snakesAr)
     {
         for (int i = 0; i < snakesAr.length; i++)
         {
