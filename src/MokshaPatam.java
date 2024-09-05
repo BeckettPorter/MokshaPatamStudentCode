@@ -8,46 +8,47 @@ import java.util.Queue;
  * at Menlo School in Atherton, CA
  *
  * Completed by: Beckett Porter
- *
+ * Completed on: 9/5/2024
  */
 
-public class MokshaPatam {
-
-    /**
-     * TODO: Complete this function, fewestMoves(), to return the minimum number of moves
-     *  to reach the final square on a board with the given size, ladders, and snakes.
-     */
-    public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
-
+public class MokshaPatam
+{
+    public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes)
+    {
+        // Declare and initialize variables
         int currentPos = 1;
         int[] numMovesTaken = new int[boardsize + 1];
         Queue<Integer> queue = new LinkedList<>();
         boolean[] visitedLocs = new boolean[boardsize + 1];
 
+        // Add the first position to the queue.
         queue.add(1);
+
+        // While loop that runs as long as we haven't reached the end of the board.
         while (currentPos != boardsize)
         {
+            // Check to make sure queue isn't empty (meaning the board is impossible) but if so, return -1.
             if (queue.isEmpty())
             {
                 return -1;
             }
 
+            // Remove the first value in the queue and set that as the current position.
             currentPos = queue.remove();
 
-            if (currentPos == boardsize)
-            {
-                return numMovesTaken[boardsize];
-            }
-
+            // For loop to check each possible dice roll.
             for (int i = 1; i <= 6; i++)
             {
+                // Check to make sure the dice roll doesn't go past the end of the board.
                 if (currentPos + i > boardsize)
                 {
                     break;
                 }
 
+                // Set the temp node to the current position plus the dice roll.
                 int node = currentPos + i;
 
+                // Checks for if the location has either a ladder or snake, and if so set the new location accordingly.
                 if (doesLocationContainLadderOrSnake(node, snakes))
                 {
                     node = whereDoesLadderOrSnakeGo(node, snakes);
@@ -57,6 +58,9 @@ public class MokshaPatam {
                     node = whereDoesLadderOrSnakeGo(node, ladders);
                 }
 
+                // If the temp node location hasn't been visited, set it to visited,
+                // add it to the queue, and set the number of moves taken to reach the node to one
+                // more than amount taken to reach the previous node.
                 if (!visitedLocs[node])
                 {
                     visitedLocs[node] = true;
@@ -65,55 +69,31 @@ public class MokshaPatam {
                 }
             }
         }
-
+        // Return the number of moves taken to reach the last position on the board.
         return numMovesTaken[boardsize];
     }
 
-
-    private static int whereDoesLadderOrSnakeGo(int ladderStartLoc, int[][] laddersAr)
+    // Helper method to check where a ladder or snake goes given an array.
+    private static int whereDoesLadderOrSnakeGo(int StartLoc, int[][] Ar)
     {
         int endLoc = -1;
 
-        for (int i = 0; i < laddersAr.length; i++)
+        for (int i = 0; i < Ar.length; i++)
         {
-            if (ladderStartLoc == laddersAr[i][0])
+            if (StartLoc == Ar[i][0])
             {
-                endLoc = laddersAr[i][1];
+                endLoc = Ar[i][1];
             }
-
         }
         return endLoc;
     }
 
-
-    private static int getDistanceToClosestLadder(int startLocation, int[][] laddersAr)
+    // Helper method that checks if a given location contains either a ladder or snake, given an array.
+    private static boolean doesLocationContainLadderOrSnake(int loc, int[][] Ar)
     {
-        int currentClosestLadderPos = Integer.MAX_VALUE;
-        boolean foundLadder = false;
-
-        for (int i = 0; i < laddersAr.length; i++)
+        for (int i = 0; i < Ar.length; i++)
         {
-            int ladderPos = laddersAr[i][0];
-            if (ladderPos > startLocation && ladderPos - startLocation < currentClosestLadderPos)
-            {
-                currentClosestLadderPos = ladderPos;
-                foundLadder = true;
-            }
-        }
-
-        if (foundLadder)
-        {
-            return currentClosestLadderPos - startLocation;
-        }
-        // Return -1 if can't find ladder (would mean they are near the end).
-        return -1;
-    }
-
-    private static boolean doesLocationContainLadderOrSnake(int loc, int[][] snakesAr)
-    {
-        for (int i = 0; i < snakesAr.length; i++)
-        {
-            if (snakesAr[i][0] == loc) {
+            if (Ar[i][0] == loc) {
                 return true;
             }
         }
